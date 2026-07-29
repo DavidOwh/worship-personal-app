@@ -306,8 +306,8 @@ body {
 }
 
 .lyrics-text {
-  font-size: 0.95rem;
-  line-height: 2;
+  font-size: 1.25rem;
+  line-height: 2.2;
   color: var(--text);
   white-space: pre-wrap;
 }
@@ -329,12 +329,13 @@ body {
 
 .ctrl-btn {
   flex: 1;
-  padding: 10px;
+  padding: 13px 6px;
   border-radius: 10px;
   border: 1.5px solid var(--border);
   background: var(--surface2);
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -364,4 +365,5 @@ body {
   padding: 40px 20px;
   font-size: 0.9rem;
 }
+
 

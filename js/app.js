@@ -1,4 +1,4 @@
-// Personal Worship App — browse songs, build playlist, play with lyrics
+﻿// Personal Worship App — browse songs, build playlist, play with lyrics
 
 const SONGS_API = 'https://songs.davidowh.com/api/songs';
 const PLAYLIST_KEY = 'worship_playlist_v1';
@@ -12,6 +12,7 @@ let currentSongId = null;
 let currentVideoId = null;
 let ytPlayer = null;
 let ytApiReady = false;
+let ytPlayerReady = false;
 let loopEnabled = false;
 
 // ── Persist playlist ──────────────────────────────────────────
@@ -152,6 +153,7 @@ function onYTStateChange(event) {
 // ── YouTube: always recreate player per song for reliable error handling
 function loadYTVideo(videoId) {
   currentVideoId = videoId;
+  ytPlayerReady = false;
   document.getElementById('ytPlaceholder').style.display = 'none';
   if (ytPlayer) {
     try { ytPlayer.destroy(); } catch (_) {}
@@ -163,7 +165,7 @@ function loadYTVideo(videoId) {
     videoId,
     playerVars: { autoplay: 1, playsinline: 1, rel: 0 },
     events: {
-      onReady: e => e.target.playVideo(),
+      onReady: e => { ytPlayerReady = true; e.target.playVideo(); },
       onError: showYTFallback,
       onStateChange: onYTStateChange
     }
@@ -215,8 +217,12 @@ function updateControls() {
 
 // ── Controls ──────────────────────────────────────────────────
 document.getElementById('replayBtn').addEventListener('click', () => {
-  if (ytPlayer) {
-    try { ytPlayer.seekTo(0); ytPlayer.playVideo(); } catch (_) {}
+  const btn = document.getElementById('replayBtn');
+  btn.classList.add('active');
+  setTimeout(() => btn.classList.remove('active'), 600);
+  if (ytPlayer && ytPlayerReady) {
+    ytPlayer.seekTo(0, true);
+    ytPlayer.playVideo();
   } else if (currentSongId) {
     playSong(currentSongId);
   }
@@ -237,7 +243,7 @@ document.getElementById('nextBtn').addEventListener('click', () => {
 document.getElementById('loopBtn').addEventListener('click', () => {
   loopEnabled = !loopEnabled;
   const btn = document.getElementById('loopBtn');
-  btn.textContent = loopEnabled ? '⟳ 循环：开' : '⟳ 循环：关';
+  btn.textContent = loopEnabled ? '⟳ Loop: On' : '⟳ Loop: Off';
   btn.classList.toggle('active', loopEnabled);
   updateControls();
 });
@@ -279,3 +285,4 @@ async function init() {
 }
 
 init();
+

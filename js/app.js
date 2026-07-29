@@ -17,6 +17,7 @@ let ytPlayer = null;
 let ytApiReady = false;
 let ytPlayerReady = false;
 let loopEnabled = false;
+let isReplaying = false;
 
 // ── Persist playlist ──────────────────────────────────────────
 function loadPlaylist() {
@@ -145,6 +146,7 @@ function showYTFallback() {
 // ── YouTube: auto-advance when song ends ──────────────────────
 function onYTStateChange(event) {
   if (event.data !== 0) return; // 0 = ended
+  if (isReplaying) { isReplaying = false; return; } // replay just triggered — ignore this end event
   const idx = playlist.indexOf(currentSongId);
   if (idx < playlist.length - 1) {
     playSong(playlist[idx + 1]);
@@ -227,9 +229,10 @@ function updateControls() {
 
 // ── Controls ──────────────────────────────────────────────────
 document.getElementById('replayBtn').addEventListener('click', () => {
+  isReplaying = true;
   const btn = document.getElementById('replayBtn');
   btn.classList.add('active');
-  setTimeout(() => btn.classList.remove('active'), 600);
+  setTimeout(() => btn.classList.remove('active'), 1500);
   if (ytPlayer && ytPlayerReady) {
     ytPlayer.seekTo(0, true);
     ytPlayer.playVideo();
@@ -295,6 +298,7 @@ async function init() {
 }
 
 init();
+
 
 
 

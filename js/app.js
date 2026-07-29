@@ -162,7 +162,10 @@ function playSong(id) {
   if (song.youtubeId) {
     placeholder.style.display = 'none';
     if (ytReady && ytPlayer) {
+      document.getElementById('ytPlaceholder').style.display = 'none';
       ytPlayer.loadVideoById(song.youtubeId);
+      // Update error handler for the new video
+      ytPlayer.addEventListener('onError', () => showYTFallback(song.youtubeId));
     } else {
       createYTPlayer(song.youtubeId);
     }
@@ -199,14 +202,28 @@ document.getElementById('backBtn').addEventListener('click', () => {
 });
 
 // ── YouTube IFrame API ────────────────────────────────────────
+function showYTFallback(videoId) {
+  const placeholder = document.getElementById('ytPlaceholder');
+  placeholder.style.display = 'flex';
+  placeholder.innerHTML = `
+    <span style="font-size:2rem">⚠️</span>
+    <span style="font-size:0.85rem;text-align:center;padding:0 16px">此视频不支持嵌入播放</span>
+    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank"
+       style="margin-top:8px;padding:8px 18px;background:#ff0000;color:#fff;border-radius:8px;text-decoration:none;font-size:0.85rem;font-weight:600">
+      ▶ 在 YouTube 打开
+    </a>`;
+}
+
 function createYTPlayer(videoId) {
   document.getElementById('ytPlayer').innerHTML = '';
+  document.getElementById('ytPlaceholder').style.display = 'none';
   if (!window.YT) { return; }
   ytPlayer = new YT.Player('ytPlayer', {
     videoId,
     playerVars: { autoplay: 1, playsinline: 1, rel: 0 },
     events: {
-      onReady: () => { ytReady = true; }
+      onReady: () => { ytReady = true; },
+      onError: () => { showYTFallback(videoId); }
     }
   });
 }

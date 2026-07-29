@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #f5f4ff;
   --surface: #ffffff;
   --surface2: #f0effe;
@@ -342,7 +342,7 @@ body {
   gap: 6px;
 }
 .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
-.ctrl-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.ctrl-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
 /* ── Tag chips ───────────────────────────────── */
 .tag {
@@ -364,3 +364,4 @@ body {
   padding: 40px 20px;
   font-size: 0.9rem;
 }
+

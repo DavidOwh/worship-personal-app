@@ -4,6 +4,9 @@ const SONGS_API = 'https://songs.davidowh.com/api/songs';
 const PLAYLIST_KEY = 'worship_playlist_v1';
 const CAT_LABELS = { praise: '赞美', worship: '敬拜', slow: '抒情', fast: '快歌', dialect: '方言' };
 
+// Strip ?si= and other tracking params YouTube sometimes appends to IDs
+function cleanYtId(id) { return id ? id.split('?')[0].split('&')[0] : id; }
+
 let allSongs = [];
 let playlist = [];
 let activeCat = 'all';
@@ -150,15 +153,22 @@ function onYTStateChange(event) {
   }
 }
 
-// ── YouTube: always recreate player per song for reliable error handling
+// ── YouTube player ───────────────────────────────────────────
 function loadYTVideo(videoId) {
   currentVideoId = videoId;
   ytPlayerReady = false;
   document.getElementById('ytPlaceholder').style.display = 'none';
-  if (ytPlayer) {
-    try { ytPlayer.destroy(); } catch (_) {}
-    ytPlayer = null;
+
+  if (ytPlayer && ytApiReady) {
+    // Reuse existing player — avoids destroy/recreate race condition
+    try {
+      ytPlayer.loadVideoById(videoId);
+      ytPlayerReady = true;
+      return;
+    } catch (_) {}
   }
+
+  // First load: create the player
   document.getElementById('ytPlayer').innerHTML = '';
   if (!window.YT || !ytApiReady) return;
   ytPlayer = new YT.Player('ytPlayer', {
@@ -176,7 +186,7 @@ window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   if (currentSongId) {
     const song = allSongs.find(s => s.id === currentSongId);
-    if (song && song.youtubeId) loadYTVideo(song.youtubeId);
+    if (song && song.youtubeId) loadYTVideo(cleanYtId(song.youtubeId));
   }
 };
 
@@ -197,7 +207,7 @@ function playSong(id) {
   document.getElementById('lyricsPanel').scrollTop = 0;
 
   if (song.youtubeId) {
-    loadYTVideo(song.youtubeId);
+    loadYTVideo(cleanYtId(song.youtubeId));
   } else {
     currentVideoId = null;
     if (ytPlayer) { try { ytPlayer.stopVideo(); } catch (_) {} }
@@ -243,7 +253,7 @@ document.getElementById('nextBtn').addEventListener('click', () => {
 document.getElementById('loopBtn').addEventListener('click', () => {
   loopEnabled = !loopEnabled;
   const btn = document.getElementById('loopBtn');
-  btn.textContent = loopEnabled ? '⟳ Loop: On' : '⟳ Loop: Off';
+  btn.textContent = loopEnabled ? '⟳ 循环 Loop: On' : '⟳ 循环 Loop: Off';
   btn.classList.toggle('active', loopEnabled);
   updateControls();
 });
@@ -285,4 +295,6 @@ async function init() {
 }
 
 init();
+
+
 

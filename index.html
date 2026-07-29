@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -9,6 +9,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="敬拜歌单" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
@@ -57,6 +59,7 @@
 
   <div class="player-controls">
     <button class="ctrl-btn" id="prevBtn">‹ 上一首</button>
+    <button class="ctrl-btn primary" id="replayBtn" title="重播">↺ 重播</button>
     <button class="ctrl-btn" id="nextBtn">下一首 ›</button>
   </div>
 
@@ -85,3 +88,4 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
+

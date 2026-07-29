@@ -1,4 +1,4 @@
-// Personal Worship App — browse songs, build playlist, play with lyrics
+﻿// Personal Worship App — browse songs, build playlist, play with lyrics
 
 const SONGS_API = 'https://songs.davidowh.com/api/songs';
 const PLAYLIST_KEY = 'worship_playlist_v1';
@@ -187,6 +187,11 @@ function updateControls() {
   document.getElementById('nextBtn').disabled = idx < 0 || idx >= playlist.length - 1;
 }
 
+document.getElementById('replayBtn').addEventListener('click', () => {
+  if (ytPlayer && ytReady) { ytPlayer.seekTo(0); ytPlayer.playVideo(); }
+  document.getElementById('lyricsPanel').scrollTop = 0;
+});
+
 document.getElementById('prevBtn').addEventListener('click', () => {
   const idx = playlist.indexOf(currentSongId);
   if (idx > 0) playSong(playlist[idx - 1]);
@@ -282,3 +287,4 @@ async function init() {
 }
 
 init();
+
